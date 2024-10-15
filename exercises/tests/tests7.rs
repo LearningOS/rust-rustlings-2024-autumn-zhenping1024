@@ -34,9 +34,22 @@
 // Execute `rustlings hint tests7` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
 
-fn main() {}
+
+// build.rs
+
+use std::time::{SystemTime, UNIX_EPOCH};
+
+fn main() {
+    // 获取当前时间与 Unix Epoch 的持续时间
+    let timestamp = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("Time went backwards")
+        .as_secs();
+    
+    // 将 TEST_FOO 环境变量设置为当前时间戳
+    println!("cargo:rustc-env=TEST_FOO={}", timestamp);
+}
 
 #[cfg(test)]
 mod tests {

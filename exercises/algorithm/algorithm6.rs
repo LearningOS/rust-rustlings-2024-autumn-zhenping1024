@@ -1,29 +1,33 @@
 /*
-	dfs
-	This problem requires you to implement a basic DFS traversal
+    dfs
+    This problem requires you to implement a basic DFS traversal
 */
 
-// I AM NOT DONE
+
 use std::collections::HashSet;
 
+// Define a graph
 struct Graph {
     adj: Vec<Vec<usize>>, 
 }
 
 impl Graph {
+    // Create a new graph with n vertices
     fn new(n: usize) -> Self {
         Graph {
             adj: vec![vec![]; n],
         }
     }
 
+    // Add an edge to the graph
     fn add_edge(&mut self, src: usize, dest: usize) {
-        self.adj[src].push(dest);
-        self.adj[dest].push(src); 
-    }
-
-    fn dfs_util(&self, v: usize, visited: &mut HashSet<usize>, visit_order: &mut Vec<usize>) {
-        //TODO
+        // 防止重复添加边
+        if !self.adj[src].contains(&dest) {
+            self.adj[src].push(dest);
+        }
+        if !self.adj[dest].contains(&src) {
+            self.adj[dest].push(src);
+        }
     }
 
     // Perform a depth-first search on the graph, return the order of visited nodes
@@ -32,6 +36,23 @@ impl Graph {
         let mut visit_order = Vec::new(); 
         self.dfs_util(start, &mut visited, &mut visit_order);
         visit_order
+    }
+
+    // Recursive utility function for DFS
+    fn dfs_util(&self, v: usize, visited: &mut HashSet<usize>, visit_order: &mut Vec<usize>) {
+        // 如果节点已经被访问过，则返回
+        if visited.contains(&v) {
+            return;
+        }
+
+        // 标记当前节点为已访问并记录访问顺序
+        visited.insert(v);
+        visit_order.push(v);
+
+        // 递归访问所有未被访问的邻居节点
+        for &neighbor in &self.adj[v] {
+            self.dfs_util(neighbor, visited, visit_order);
+        }
     }
 }
 
@@ -56,7 +77,7 @@ mod tests {
         graph.add_edge(0, 2);
         graph.add_edge(1, 2);
         graph.add_edge(2, 3);
-        graph.add_edge(3, 3); 
+        graph.add_edge(3, 3); // 自环
 
         let visit_order = graph.dfs(0);
         assert_eq!(visit_order, vec![0, 1, 2, 3]);
@@ -75,4 +96,3 @@ mod tests {
         assert_eq!(visit_order_disconnected, vec![3, 4]); 
     }
 }
-
